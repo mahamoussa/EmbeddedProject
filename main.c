@@ -48,6 +48,7 @@ DMA_HandleTypeDef hdma_adc1;
 I2C_HandleTypeDef hi2c1;
 
 TIM_HandleTypeDef htim2;
+TIM_HandleTypeDef htim3;
 
 UART_HandleTypeDef huart1;
 
@@ -63,6 +64,7 @@ static void MX_ADC1_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_TIM2_Init(void);
+static void MX_TIM3_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -71,11 +73,13 @@ static void MX_TIM2_Init(void);
 /* USER CODE BEGIN 0 */
 uint32_t adc_val;
 uint32_t buffer;
+uint32_t adc_data[1000];
+uint32_t i=0;
 int flag=0;
-//uint32_t buffer_arr[770];
+
 char msg[256];
 char val[1];
-volatile int cnt=0;
+uint32_t cnt=0;
 //volatile int i=0;
  void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart){
 			HAL_UART_Receive_IT(&huart1,(uint8_t*) val, sizeof(val));
@@ -102,25 +106,49 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
-	char sucess[]="YASSSSSS";
-	if(htim->Instance==TIM2){
-		if(cnt==59){
-		//HAL_UART_Transmit(&huart1, (uint8_t *)sucess, strlen(sucess), HAL_MAX_DELAY);
-		//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-			//cnt=0;
-			//flag=0;
-		//HAL_TIM_Base_Stop_IT(&htim2);
+//	char sucess[]="YASSSSSS";
+//	if(htim->Instance==TIM2){
+//		if(cnt==59){
+//		//HAL_UART_Transmit(&huart1, (uint8_t *)sucess, strlen(sucess), HAL_MAX_DELAY);
+//		//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+//			//cnt=0;
+//			//flag=0;
+//		//HAL_TIM_Base_Stop_IT(&htim2);
+//		}
+//		else{
+//			cnt=cnt+1;
+//			//sprintf(msg, "%zu\r\n", adc_val);
+//			//HAL_UART_Transmit(&huart1, (uint8_t *)sucess, strlen(sucess), HAL_MAX_DELAY);
+////			if(flag==1){
+////			HAL_UART_Transmit(&huart1, (uint8_t *)msg, strlen(msg), HAL_MAX_DELAY);	
+////			}
+//		}
+//		HAL_TIM_Base_Start_IT(&htim2);
+//	}
+//	
+	
+	if(htim->Instance==TIM3 ){
+		HAL_ADC_Start(&hadc1);
+		HAL_ADC_PollForConversion(&hadc1, 1);
+		adc_data[i] = HAL_ADC_GetValue(&hadc1);
+		if(cnt<10850){
+		sprintf(msg, "%zu\r\n", adc_data[i]);
+		HAL_UART_Transmit(&huart1, (uint8_t *)msg, strlen(msg), HAL_MAX_DELAY);	
+			cnt++;
 		}
 		else{
-			cnt=cnt+1;
-			sprintf(msg, "%zu\r\n", adc_val);
-			//HAL_UART_Transmit(&huart1, (uint8_t *)sucess, strlen(sucess), HAL_MAX_DELAY);
-			if(flag==1){
-			HAL_UART_Transmit(&huart1, (uint8_t *)msg, strlen(msg), HAL_MAX_DELAY);	
-			}
+			cnt=0;
+			HAL_TIM_Base_Stop_IT(&htim3);
+		}
+		
+		
+		HAL_ADC_Stop(&hadc1);
+		i++;
+		if(i>1000){
+			i=0;
+			
 		}
 	}
-	HAL_TIM_Base_Start_IT(&htim2);
 }
 /* USER CODE END 0 */
 
@@ -157,12 +185,14 @@ int main(void)
   MX_I2C1_Init();
   MX_USART1_UART_Init();
   MX_TIM2_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
 //	lcd_init();
 // HAL_ADC_Start_DMA(&hadc1,&buffer, 1 );
  HAL_UART_Receive_IT(&huart1,(uint8_t*) val, sizeof(val));
 //HAL_ADC_Start_IT(&hadc1);
- HAL_TIM_Base_Start_IT(&htim2);
+ //HAL_TIM_Base_Start_IT(&htim2);
+ HAL_TIM_Base_Start_IT(&htim3);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -173,11 +203,11 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		HAL_ADC_Start(&hadc1);
-		HAL_ADC_PollForConversion(&hadc1 ,100); // wait for the conversion to finish 
-		adc_val = HAL_ADC_GetValue(&hadc1);
-		HAL_ADC_Stop(&hadc1);
-		HAL_Delay(1);
+//		HAL_ADC_Start(&hadc1);
+//		HAL_ADC_PollForConversion(&hadc1 ,100); // wait for the conversion to finish 
+//		adc_val = HAL_ADC_GetValue(&hadc1);
+//		HAL_ADC_Stop(&hadc1);
+//		HAL_Delay(1);
   }
   /* USER CODE END 3 */
 }
@@ -347,6 +377,51 @@ static void MX_TIM2_Init(void)
   /* USER CODE BEGIN TIM2_Init 2 */
 
   /* USER CODE END TIM2_Init 2 */
+
+}
+
+/**
+  * @brief TIM3 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM3_Init(void)
+{
+
+  /* USER CODE BEGIN TIM3_Init 0 */
+
+  /* USER CODE END TIM3_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM3_Init 1 */
+
+  /* USER CODE END TIM3_Init 1 */
+  htim3.Instance = TIM3;
+  htim3.Init.Prescaler = 0;
+  htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim3.Init.Period = 9000;
+  htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM3_Init 2 */
+
+  /* USER CODE END TIM3_Init 2 */
 
 }
 

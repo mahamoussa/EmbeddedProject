@@ -21,8 +21,11 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f1xx_it.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "string.h"
+#include "stdio.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -60,10 +63,15 @@
 extern DMA_HandleTypeDef hdma_adc1;
 extern ADC_HandleTypeDef hadc1;
 extern TIM_HandleTypeDef htim2;
+extern TIM_HandleTypeDef htim3;
 extern UART_HandleTypeDef huart1;
 /* USER CODE BEGIN EV */
 extern char val[1];
 extern uint32_t buffer;
+extern uint32_t adc_data[1000];
+// uint32_t i=0;
+// char msg[256];
+//extern ADC_HandleTypeDef hadc1;
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -212,7 +220,7 @@ void DMA1_Channel1_IRQHandler(void)
   /* USER CODE END DMA1_Channel1_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_adc1);
   /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
- adc_val=buffer;
+ //adc_val=buffer;
   /* USER CODE END DMA1_Channel1_IRQn 1 */
 }
 
@@ -245,6 +253,33 @@ void TIM2_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles TIM3 global interrupt.
+  */
+void TIM3_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM3_IRQn 0 */
+
+  /* USER CODE END TIM3_IRQn 0 */
+    HAL_TIM_IRQHandler(&htim3);
+  /* USER CODE BEGIN TIM3_IRQn 1 */
+//     HAL_ADC_Start(&hadc1);
+//		HAL_ADC_PollForConversion(&hadc1, 1);
+//		adc_data[i] = HAL_ADC_GetValue(&hadc1);
+//		
+//		sprintf(msg, "%zu\r\n", adc_data[i]);
+//		HAL_UART_Transmit(&huart1, (uint8_t *)msg, strlen(msg), HAL_MAX_DELAY);	
+//		
+//		HAL_ADC_Stop(&hadc1);
+//		i++;
+//		if(i>1000){
+//			i=0;
+//			HAL_TIM_Base_Stop_IT(&htim3);
+//			
+//		}
+  /* USER CODE END TIM3_IRQn 1 */
+}
+
+/**
   * @brief This function handles USART1 global interrupt.
   */
 void USART1_IRQHandler(void)
@@ -252,7 +287,7 @@ void USART1_IRQHandler(void)
   /* USER CODE BEGIN USART1_IRQn 0 */
 
   /* USER CODE END USART1_IRQn 0 */
-    HAL_UART_IRQHandler(&huart1);
+  HAL_UART_IRQHandler(&huart1);
   /* USER CODE BEGIN USART1_IRQn 1 */
 
 		// if(val[0]=='1'){
