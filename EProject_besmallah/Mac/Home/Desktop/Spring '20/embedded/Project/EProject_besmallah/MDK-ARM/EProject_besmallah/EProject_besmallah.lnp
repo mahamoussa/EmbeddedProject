@@ -1,0 +1,27 @@
+--cpu Cortex-M3
+"eproject_besmallah\startup_stm32f103xb.o"
+"eproject_besmallah\main.o"
+"eproject_besmallah\stm32f1xx_it.o"
+"eproject_besmallah\stm32f1xx_hal_msp.o"
+"eproject_besmallah\stm32f1xx_hal_gpio_ex.o"
+"eproject_besmallah\stm32f1xx_hal_adc.o"
+"eproject_besmallah\stm32f1xx_hal_adc_ex.o"
+"eproject_besmallah\stm32f1xx_hal.o"
+"eproject_besmallah\stm32f1xx_hal_rcc.o"
+"eproject_besmallah\stm32f1xx_hal_rcc_ex.o"
+"eproject_besmallah\stm32f1xx_hal_gpio.o"
+"eproject_besmallah\stm32f1xx_hal_dma.o"
+"eproject_besmallah\stm32f1xx_hal_cortex.o"
+"eproject_besmallah\stm32f1xx_hal_pwr.o"
+"eproject_besmallah\stm32f1xx_hal_flash.o"
+"eproject_besmallah\stm32f1xx_hal_flash_ex.o"
+"eproject_besmallah\stm32f1xx_hal_exti.o"
+"eproject_besmallah\stm32f1xx_hal_i2c.o"
+"eproject_besmallah\stm32f1xx_hal_tim.o"
+"eproject_besmallah\stm32f1xx_hal_tim_ex.o"
+"eproject_besmallah\stm32f1xx_hal_uart.o"
+"eproject_besmallah\system_stm32f1xx.o"
+--library_type=microlib --strict --scatter "EProject_besmallah\EProject_besmallah.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "EProject_besmallah.map" -o EProject_besmallah\EProject_besmallah.axf
